@@ -9,8 +9,6 @@ const sluggo = require('slugify')
 const db = new PouchDB(process.env.COUCHDB_URL)
 
 const getDoc = function (docId, cb) {      // cb is the callback function
-
-
   db.get(docId, function (err, data){
     if (err) {
       console.log('IM IN THE DAL and there is an error', err)
@@ -21,9 +19,27 @@ const getDoc = function (docId, cb) {      // cb is the callback function
   } )
 }
 
+const deleteDoc = function (docId, cb){
+  db.get(docId, function (err, doc){
+    if (err){
+      cb(err)
+      return
+    }
+    console.log('retrieved document for deletion: ', doc)
+    db.remove(doc, function (err, deletedResult) {
+      if(err){
+        cb(err)
+        return
+      }
+      cb(null, deletedResult)
+    })
+  })
+}
+
 
 const dal ={
-  getDoc             // This is the same as getDoc : getDoc
+  getDoc,
+  deleteDoc             // This is the same as getDoc : getDoc
 }
 
 module.exports = dal
